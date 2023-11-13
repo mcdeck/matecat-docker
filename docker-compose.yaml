@@ -20,9 +20,9 @@ services:
     environment:
       # - TZ=UTC
       - TZ=Europe/Berlin
-      - CLI_HTTP_HOST=https://localhost:8443
-      - COOKIE_DOMAIN=localhost
-      - SSE_BASE_URL=localhost:8443/sse
+      - CLI_HTTP_HOST=https://${HOSTNAME:-localhost}:${APACHE_HTTPS_PORT:-8443}
+      - COOKIE_DOMAIN=${HOSTNAME:-localhost}
+      - SSE_BASE_URL=https://${HOSTNAME:-localhost}:${APACHE_HTTPS_PORT:-8443}/sse
       - SMTP_HOST=eu-sys-smtp.cerence.net
       - SMTP_PORT=25
       - SMTP_SENDER=no-reply-matecat@cerence.systems
