@@ -1,5 +1,7 @@
 FROM ubuntu/apache2:2.4-22.04_beta
 
+RUN apt-get -y update
+
 RUN apt-get -y install software-properties-common
 
 RUN add-apt-repository -y ppa:ondrej/php && \
@@ -52,6 +54,6 @@ ENV APACHE_RUN_USER www-data
 ENV APACHE_RUN_GROUP www-data
 RUN touch /app/matecat/inc/login_secret.dat
 RUN chown -R www-data:www-data /app/matecat/
-COPY ./start.sh /
+COPY --chmod=0755 ./start.sh /
 
 CMD ["/bin/bash", "-c", "/start.sh"]

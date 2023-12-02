@@ -29,6 +29,9 @@ services:
       - SMTP_HOSTNAME=localhost
       - FILTERS_ADDRESS=http://filters:8732
       - FILTERS_RAPIDAPI_KEY=
+      # Note: even if there's a metacat-storage volume defined below, we don't
+      # yet use that, since we would need to setup the dir structure and perms
+      # from the app/metacat/storage (TODO some setup?).
       - STORAGE_DIR=/app/matecat/storage
     volumes:
       - www-data:/var/www/html
@@ -66,6 +69,11 @@ services:
       - mysql-data:/var/lib/mysql
     expose:
       - 3306
+    ulimits:
+      # See https://github.com/docker-library/mysql/issues/579#issuecomment-519495808
+      nofile:
+        soft: 262144
+        hard: 262144
 
   nodejs:
     image: matecat-nodejs
@@ -87,7 +95,8 @@ services:
     ports:
       - ${ACTIVE_MQ_GMX_PORT:-8161}:8161
     healthcheck:
-      test: ["CMD", "bash", "-c", "curl --silent -u admin:admin --show-error http://localhost:8161/api/jolokia/exec/org.apache.activemq:type=Broker,brokerName=localhost,service=Health/healthStatus | tee /dev/null | grep --silent 'Good'"]
+      # "Worried" might be printed if the drive is running low on space.
+      test: ["CMD", "bash", "-c", "curl --silent -u admin:admin --show-error http://localhost:8161/api/jolokia/exec/org.apache.activemq:type=Broker,brokerName=localhost,service=Health/healthStatus | tee /dev/null | grep --silent 'Good\\|Worried'"]
 
   filters:
     image: matecat-filters
