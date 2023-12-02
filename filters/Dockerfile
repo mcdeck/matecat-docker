@@ -32,7 +32,7 @@ RUN apk add bash openjdk8
 WORKDIR /app/filters
 COPY --from=buildenv /src/MateCat-Filters/filters/target/filters-${FILTERS_VERSION}.jar ./
 COPY --from=buildenv /src/MateCat-Filters/filters/src/main/resources/config.sample.properties ./config.properties
-COPY ./entrypoint.sh ./
+COPY --chmod=0755 ./entrypoint.sh ./
 
 ENTRYPOINT [ "/app/filters/entrypoint.sh" ]
 
